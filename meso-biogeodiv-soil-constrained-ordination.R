@@ -38,19 +38,18 @@ cap_var_props <- function(cca){
 
 # load data
 
-biodiv.dist.tab<-read.csv("greenlon-meso-biogeo-data/0.2-deg-cells.10-clusters.dist-mat.csv",header=T,row.names=1)
-biodiv.squares.old.data<-read.table("greenlon-meso-biogeo-data/biodiv-0.2deg-squares.soil-type.lat.cluster.tsv",header=T,row.names=1,sep="\t")
-biodiv.squares.data<-read.table("greenlon-meso-biogeo-data/biodiv-0.2deg-squares.all-geo-data.9.29.18.tsv",header=T,row.names=1,sep='\t')
+biodiv.dist.tab<-read.csv("0.2-deg-cells.10-clusters.dist-mat.csv",header=T,row.names=1)
+biodiv.squares.old.data<-read.table("biodiv-0.2deg-squares.soil-type.lat.cluster.tsv",header=T,row.names=1,sep="\t")
+biodiv.squares.data<-read.table("biodiv-0.2deg-squares.all-geo-data.9.29.18.tsv",header=T,row.names=1,sep='\t')
 biodiv.squares.data$biodiv.cluster<-biodiv.squares.old.data$biodiv.cluster
 biodiv.squares.data$square.id<-rownames(biodiv.squares.data)
 biodiv.squares.data$country<-substr(biodiv.squares.data$square.id,start=1,stop=2)
-grids.counts<-read.csv("greenlon-meso-biogeo-data/biodiv-0.2-grids.clade-counts.tsv",head=T,row.names=1,sep='\t')
+grids.counts<-read.csv("biodiv-0.2-grids.clade-counts.tsv",head=T,row.names=1,sep='\t')
 grids.counts.melt<-melt(as.matrix(grids.counts),variable.name="grid",value.name="count")
 grids.counts.melt<-merge(grids.counts.melt,biodiv.squares.data,by.x="Var2",by.y="square.id")
 
 # set color schemes
 cluster.levels<-c("A1","A2","A4","B1","B4","B5","B6","A3","B2","B3")
-#cluster.colors<-c("#a6cee3","#1f78b4","#33a02c","#fb9a99","#ff7f00","#cab2d6","#6a3d9a","#b2df8a","#e31a1c","#fdbf6f")
 cluster.colors<-c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a")
 cluster.cols<-c("A1"="#a6cee3","A2"="#1f78b4","A3"="#b2df8a","A4"="#33a02c","B1"="#fb9a99","B2"="#e31a1c","B3"="#fdbf6f","B4"="#ff7f00","B5"="#cab2d6","B6"="#6a3d9a")
 clade.levels<-c("1","2","3","4","5","6","7","8")
@@ -125,13 +124,6 @@ step.res<-ordistep(cap0,scope=formula(cap1),direction="forward",perm.max=999)
 step.res$anova
 
 # generate estimates of percent variation explained based on model chosen from forward selection
-
-#adonis(as.dist(biodiv.dist.tab) ~ temp + prec + soil.genus + latt, data = biodiv.squares.data)
-#adonis(as.dist(biodiv.dist.tab) ~ latt + temp + soil.genus + prec, data = biodiv.squares.data)
-
-# generate confidence intervals (sort of..somehow)
-
-#cap.stepped<-capscale(as.dist(biodiv.dist.tab) ~ temp + prec + soil.genus + latt, data = biodiv.squares.data)
 
 #cap.stepped<-capscale(as.dist(biodiv.dist.tab) ~ latt + temp + soil.genus + prec, data = biodiv.squares.data)
 cap.stepped<-step.res
@@ -419,11 +411,8 @@ cap.temp.summ<-summary(temp.cap)
 cap.temp.df1<-data.frame(cap.temp.summ$sites[,1:2])
 
 # interlude to plot the temp cap
-#temp.myxlab<-paste("CAP1, ",round(100*temp.cap_var[1],1),"% Variation Explained",sep="")
-#temp.myylab<-paste("MDS1, ",round(100*temp.cap_var[2],1),"% Variation Explained",sep="")
-
 # temp cap plot colored by biodiv cluster
-### problem here where the cap results are a bit different here from for the soil type cap, so need to get % var explained from MDS1...
+### because temperature is a rational variable (as opposed to categorical like soil type) there is only 1 CAP, so the y axis is the first MDS
 ppp + geom_point(data=cap.temp.df1,aes(x=CAP1,y=MDS1,color=biodiv.squares.old.data$biodiv.cluster))+scale_color_manual(values=all.cols)+xlab("CAP1") + ylab("MDS1")+labs(color="Beta diversity\ncluster") +
   ggtitle(paste("Mean Annual Temperature: ",round(100*temp.variance,1),"% of variance; P < ", format(temp.p.val, digits=2),"; 95% CI = ",  format(temp.ci[1]*100, digits=2), "%, ", format(temp.ci[2]*100, digits=2), "%]", sep=""))
 ggsave("FigS.temp-cap.biodiv-clust-color.png")
@@ -434,11 +423,7 @@ ppp + geom_point(data=cap.temp.df1,aes(x=CAP1,y=MDS1,color=biodiv.squares.data$t
 ggsave("FigS.soil-cap.soil-type-color.png")
 
 # draw bar plots
-# put this on the end because for some reason i think doing the re-order on
-# biodiv.squares.data messes with how the colors match to the points in the pcoa biplots above
-# ...should figure out why
-
-biodiv.squares.data<-read.table("greenlon-meso-biogeo-data/biodiv-0.2deg-squares.all-geo-data.9.29.18.tsv",header=T,row.names=1,sep='\t')
+biodiv.squares.data<-read.table("biodiv-0.2deg-squares.all-geo-data.9.29.18.tsv",header=T,row.names=1,sep='\t')
 biodiv.squares.data$biodiv.cluster<-biodiv.squares.old.data$biodiv.cluster
 biodiv.squares.data$square.id<-rownames(biodiv.squares.data)
 biodiv.squares.data$country<-substr(biodiv.squares.data$square.id,start=1,stop=2)
