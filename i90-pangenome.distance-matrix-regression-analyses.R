@@ -4,32 +4,30 @@ library(seqinr)
 library(vegan)
 library(reshape2)
 
-load("greenlon-meso-biogeo-data/distance-matrix-regression-analyses.12.6.18.Robj")
+load("distance-matrix-regression-analyses.12.6.18.Robj")
 
-obvi.phylophlanaln<-read.alignment("greenlon-meso-biogeo-data/obvi-meso-and-min-meso-refs.phylophlan-markers.concat.aln.ffn",format="fasta")
+obvi.phylophlanaln<-read.alignment("obvi-meso-and-min-meso-refs.phylophlan-markers.concat.aln.ffn",format="fasta")
 obvi.phylophlandist<-as.matrix(dist.alignment(obvi.phylophlanaln,matrix="identity"))
-phylophlanaln<-read.alignment("greenlon-meso-biogeo-data/nod-meso.phylophlan-markers.concat.aln.fasta",format="fasta")
+phylophlanaln<-read.alignment("nod-meso.phylophlan-markers.concat.aln.fasta",format="fasta")
 phylophlandist<-as.matrix(dist.alignment(phylophlanaln,matrix="identity"))
-symaln<-read.alignment("greenlon-meso-biogeo-data/nod-meso.sym-genes.concat.aln.no-blanks.fasta",format="fasta")
+symaln<-read.alignment("nod-meso.sym-genes.concat.aln.no-blanks.fasta",format="fasta")
 symdist<-as.matrix(dist.alignment(symaln,matrix="identity"))
-panaln<-read.alignment("greenlon-meso-biogeo-data/all.accessory_binary_genes.all-obvi-i-90.TG.fasta",format="fasta")
+panaln<-read.alignment("all.accessory_binary_genes.all-obvi-i-90.TG.fasta",format="fasta")
 pandist<-as.matrix(dist.alignment(panaln,matrix="identity"))
 
-geopoints<-read.csv("greenlon-meso-biogeo-data/nod-meso.lat-lon.etc.csv",header=T)
+geopoints<-read.csv("nod-meso.lat-lon.etc.csv",header=T)
 geomat2<-data.frame(x=geopoints$lon,y=geopoints$lat)
 geodist2<-spDists(as.matrix(geomat2),longlat=TRUE)
 rownames(geodist2)<-geopoints$sample
 colnames(geodist2)<-geopoints$sample
 
-alldata<-read.csv("greenlon-meso-biogeo-data/all-genomes.all-info.5.4.18.tsv",header=T,row.names=2,sep='\t')
+alldata<-read.csv("all-genomes.all-info.5.4.18.tsv",header=T,row.names=2,sep='\t')
 alldatasub<-alldata[rownames(geodist2),]
 
-obvi.meso.data<-read.table("greenlon-meso-biogeo-data/ovbi-meso-data.txt",sep="\t",header=T)
-#fields.list<-as.vector(read.table("fields-for-ani-analysis.txt",header=F)$V1)
-fields.list<-read.table("greenlon-meso-biogeo-data/fields-for-ani-analysis.txt",header=F)
+obvi.meso.data<-read.table("ovbi-meso-data.txt",sep="\t",header=T)
+fields.list<-read.table("fields-for-ani-analysis.txt",header=F)
 
 phylophlandistsub<-phylophlandist[rownames(alldatasub),rownames(alldatasub)]
-#pandist.sub<-pandist[rownames(alldatasub),rownames(alldatasub)]
 pandist.sub<-pandist[rownames(alldatasub),rownames(alldatasub)]
 symdistsub<-symdist[rownames(alldatasub),rownames(alldatasub)]
 geodist2sub<-geodist2[rownames(alldatasub),rownames(alldatasub)]
@@ -66,13 +64,13 @@ ggplot(df,aes(x=phylo,y=pan,color=geo)) + geom_point(size=0.1,alpha=0.5) + scale
     theme(legend.position = c(0.2,0.8)) +
     ggsave("F3C.core-vs-pan-vs-geo-dist.png")
 
-alldist<-read.table("greenlon-meso-biogeo-data/geophylosymdists.pangenome-set.txt",header=T)
+alldist<-read.table("geophylosymdists.pangenome-set.txt",header=T)
 nams=with(alldist,unique(c(as.character(min.genome),as.character(max.genome))))
 geodist<-with(alldist,structure(geodist,Size=length(nams),Labels=nams,Diag=FALSE,Upper=FALSE,method="user",class="dist"))
 nodanddist<-with(alldist,structure(phylophlan.marker.and,Size=length(nams),Labels=nams,Diag=FALSE,Upper=FALSE,method="user",class="dist"))
 nodsymdist<-with(alldist,structure(sym.gene.and,Size=length(nams),Labels=nams,Diag=FALSE,Upper=FALSE,method="user",class="dist"))
 
-andlong<-read.csv("greenlon-meso-biogeo-data/and.all-pairs.csv",header=T)
+andlong<-read.csv("and.all-pairs.csv",header=T)
 nams=with(andlong,unique(c(as.character(A),as.character(B))))
 anddist<-as.matrix(with(andlong,structure(and,Size=length(nams),Labels=nams,Diag=FALSE,Upper=FALSE,method="user",class="dist")))
 
@@ -82,13 +80,11 @@ ggplot(df,aes(x=phylo.sq,y=pan.sq,color=geo))+geom_point(size=0.1,alpha=0.5)+sca
 obvi.phylophlandist.test<-obvi.phylophlandist
 obvi.phylophlandist.test[lower.tri(obvi.phylophlandist.test,diag=T)]<-NA
 obvi.phylophlandist.long<-data.frame(Var1=character(),Var2=character(),value=double(),field=character(),inoc=character(),stringsAsFactors=FALSE)
-#field.df<-data.frame(row.names=fields.list)
 field.df<-data.frame(row.names=as.vector(fields.list$V1))
 for (i in 1:length(rownames(fields.list))){
   field<-toString(fields.list$V1[i])
   inoc<-toString(fields.list$V2[i])
   g.in.field<-as.vector(obvi.meso.data[which(obvi.meso.data$unique.field==field),]$sample_title)
-#  field.df[field,1]<-mean(obvi.phylophlandist[g.in.field,g.in.field])
   field.df[field,1]<-mean(obvi.phylophlandist.test[g.in.field,g.in.field],na.rm=T)
   temp.df<-melt(as.matrix(obvi.phylophlandist.test[g.in.field,g.in.field]))
   temp.df$field<-field
@@ -121,7 +117,7 @@ anova(country.lm)
 country.aov<-aov(obvi.phylophlandist.country.long$value ~ obvi.phylophlandist.country.long$country)
 TukeyHSD(x=country.aov)
 
-all.assigned.data<-read.table("greenlon-meso-biogeo-data/all-ani-assigned-genomes.data.tsv",header=T,sep='\t')
+all.assigned.data<-read.table("all-ani-assigned-genomes.data.tsv",header=T,sep='\t')
 country.counts<-table(all.assigned.data$Country.of.origin,all.assigned.data$ANI95.OTU)
 rowSums(country.counts)
 diversity(country.counts)
