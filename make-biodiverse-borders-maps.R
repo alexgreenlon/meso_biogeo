@@ -6,8 +6,6 @@ library(sp)
 library(raster)
 library(rgdal)
 
-#setwd("~/chickpea/scripts-etc")
-
 cluster.levels<-c("A1","A2","A4","B1","B4","B5","B6","A3","B2","B3")
 cluster.colors<-c("#a6cee3","#1f78b4","#33a02c","#fb9a99","#ff7f00","#cab2d6","#6a3d9a","#b2df8a","#e31a1c","#fdbf6f")
 
@@ -58,11 +56,6 @@ turkey.gg.df<-do.call(rbind,lapply(turkey.sldf$id,function(x)data.frame(id=x,coo
       geom_path(data=india.gg.df,aes(x=X1,y=X2),inherit.aes=F,size=1.5,color="#984ea3") +
       geom_path(data=morocco.gg.df,aes(x=X1,y=X2),inherit.aes=F,size=1.5,color="#4daf4a") +
       geom_path(data=turkey.gg.df,aes(x=X1,y=X2),inherit.aes=F,size=1.5,color="#e41a1c") +
-  #    geom_path(data=ethiopia.gg.df,aes(x=X1,y=X2),inherit.aes=F,size=1.5,color="#7A9F35") +
-  #    geom_path(data=india.gg.df,aes(x=X1,y=X2),inherit.aes=F,size=1.5,color="#354F00") +
-  #    geom_path(data=morocco.gg.df,aes(x=X1,y=X2),inherit.aes=F,size=1.5,color="#D4EE9F") +
-  #    geom_path(data=turkey.gg.df,aes(x=X1,y=X2),inherit.aes=F,size=1.5,color="#226666") +
-  #    theme_update(panel.border = element_rect(color = "black", fill=NA, size=1)) +
       theme_update(panel.border = element_rect(colour = "#000000", fill=NA, size=2)) +
       theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank())#, axis.line = element_line(colour = "black"))
@@ -71,11 +64,11 @@ turkey.gg.df<-do.call(rbind,lapply(turkey.sldf$id,function(x)data.frame(id=x,coo
 ggsave("F2A.world-panel.png",dpi=300)
 
 # load data for region-specific maps
-noddata<-read.csv("greenlon-meso-biogeo-data/all-rhizobiales-nodules.lat-lon.host-and-country.no-dups.ani-otus.csv",header=T,row.names=1)
-more.noddata<-read.table("greenlon-meso-biogeo-data/all-rhizobiales-nods.all-info.8.23.18.tsv",header=T,row.names=1,sep="\t")
+noddata<-read.csv("all-rhizobiales-nodules.lat-lon.host-and-country.no-dups.ani-otus.csv",header=T,row.names=1)
+more.noddata<-read.table("all-rhizobiales-nods.all-info.8.23.18.tsv",header=T,row.names=1,sep="\t")
 more.noddata$soil.taxnwrb.group.genus<-sapply(strsplit(as.vector(more.noddata$soil.taxnwrb.group),split=" "), `[`, 2)
 
-nod.biodiverse.grids<-read.csv("greenlon-meso-biogeo-data/0.2-deg-cells.10-clusters.csv",header=T,row.names=1)
+nod.biodiverse.grids<-read.csv("0.2-deg-cells.10-clusters.csv",header=T,row.names=1)
 nod.biodiverse.grids$id=rownames(nod.biodiverse.grids)
 
 # draw ethiopia map
