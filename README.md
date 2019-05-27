@@ -44,7 +44,44 @@ cd bin/phylophlan/
 roary -i 90 -p 24 -f results/pangenome/roary/all-rhizobiales-comp90-cont10-pacbio/results.w.pb -e -n -v results/pangenome/roary/all-rhizobiales-comp90-cont10-pacbio/gffs/*.gff
 ```
 ### ANI analysis:
+Generate lists of phylophlan marker genes from assemblies included in phylophlan anlaysis:
+```
+cat data/ani/obviously-meso-assemblies/meso-nods.list.txt | while read line
+do
+        cat bin/phylophlan/marker-list.txt | while read marker
+        do
+                grep "$line" bin/phylophlan/data/phyllos-and-meso-nods-and-cultures/"$marker".aln | sed 's/>//' >> data/ani/obviously-meso-assemblies/phylophlan-gene-lists/"$line".list.txt
+        done
+done
 
+cat data/ani/obviously-meso-assemblies/meso-cultures.list.txt | while read line
+do
+        cat bin/phylophlan/marker-list.txt | while read marker
+        do
+                grep "$line" bin/phylophlan/data/phyllos-and-meso-nods-and-cultures/"$marker".aln | sed 's/>//' >> data/ani/obviously-meso-assemblies/phylophlan-gene-lists/"$line".list.txt
+        done
+done
+
+cat data/ani/obviously-meso-assemblies/minimum-mesorhizobium-phylogenetic-reference-set.txt | while read line
+do
+        cat bin/phylophlan/marker-list.txt | while read marker
+        do
+                grep "$line" bin/phylophlan/data/minimum-meso-set-prokka/"$marker".aln | sed 's/>//' >> data/ani/obviously-meso-assemblies/phylophlan-gene-lists/"$line".list.txt
+        done
+done
+```
+Generate fastas for each genome of only marker-gene sequences:
+```
+cat data/ani/obviously-meso-assemblies/obviously-meso-assemblies-and-min-meso-refs.list.txt | while read line
+do
+        ./bin/pull-seqs-from-fasta.old.py data/ani/obviously-meso-assemblies/phylophlan-gene-lists/"$line".list.txt data/gene-predictions/prokka/"$line"/"$line".ffn > data/ani/obviously-meso-assemblies/phylophlan-ffns/"$line".phylophlan.ffn
+done
+```
+Generate pairwise ANI comparisons on phylophlan marker genes between genome `$A` and `$B`:
+```
+mkdir data/ani/obviously-meso-assemblies/phylophlan-markers.results/"$A".vs."$B"
+./bin/ANIcalculator_v1/ANIcalculator -genome1fna data/ani/obviously-meso-assemblies/phylophlan-ffns/"$A".phylophlan.ffn -genome2fna data/ani/obviously-meso-assemblies/phylophlan-ffns/"$B".phylophlan.ffn -outdir data/ani/obviously-meso-assemblies/phylophlan-markers.results/"$A".vs."$B"
+```
 ### Sym-island analysis:
 Generate sym-gene lists from roary pangenome table:
 With list of genes in symbiosis island in reference strain (included in roary pangenome analysis):
@@ -105,7 +142,7 @@ done
 - `pull-seq-from-fasta.py`
 
 
-To re-create r-generated figures and analyses for the manuscript, download the files from the below figshare repository to the same directory as the scripts and run with `rscript`. 
+To re-create r-generated figures and analyses for the manuscript, download the files from the below figshare repository to the same directory as the scripts and run with `rscript`.
 
 Data required to run r scripts is available at:
 
