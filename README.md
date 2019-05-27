@@ -96,6 +96,7 @@ done
 ```
 ## Gathering metadata:
 ### ISRIC:
+`RSCRIPT make-isric-taxousda-subsets.r`
 ### Bioclim data:
 
 ## Scripts to upload:
