@@ -96,9 +96,9 @@ done
 ```
 ## Gathering metadata:
 ### ISRIC:
-`RSCRIPT make-isric-taxousda-subsets.r`
+`Rscript make-isric-taxousda-subsets.r`
 ### Bioclim data:
-
+`Rscript extract-bioclim-mean-temp-mean-prec.9.27.18.R`
 ## Scripts to upload:
 - peter's pipeline and accessory scripts
 - `make-all-gene-lists-from-roary-output.py`
