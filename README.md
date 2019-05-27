@@ -26,7 +26,7 @@ ILLUMINACLIP:bin/Trimmomatic-0.36/adapters/NexteraPE-PE.fa:2:30:10 LEADING:3 TRA
 
 ## Nodule-DNA libraries:
 ### Metagenomic assembly pipeline:
-
+`.scripts/nodule-metagenome-wrapper.pl`
 
 ## All geneome assemblies:
 ### Annotation:
