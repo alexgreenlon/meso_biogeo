@@ -23,7 +23,22 @@ ILLUMINACLIP:bin/Trimmomatic-0.36/adapters/NexteraPE-PE.fa:2:30:10 LEADING:3 TRA
 ### HGAP:
 ### Miniasm:
 ### camsa:
+Create consensus assembly from two PacBio-only contigs (from HGAP and MiniASM) and Illumina-only scaffolds for the same strain. 
 
+First requires running a multiple-sequence aligment of each of the assemblies using progressiveCactus. ProgressiveCactus takes as input a tab-delimited file that gives the name for each assembly and the path to the fasta-formatted assembly file (`"$SAMPLE".paths.txt` in the example below):
+```
+bin/runProgressiveCactus.sh /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/"$SAMPLE".paths.txt /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17 /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17/"$SAMPLE".hal
+hal2mafMP.py /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17/"$SAMPLE".hal /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17/"$SAMPLE".hal.maf
+```
+
+Then to run camsa to create consensus assembly:
+```
+./bin/ragout-1.2-macosx-x86_64/lib/ragout-maf2synteny -o data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".maf2synteny data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".hal.maf
+ragout_coords2camsa_points.py data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".maf2synteny/5000/blocks_coords.txt --bad-genomes "Anc0" -o data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".camsa.points
+ragout_coords2camsa_seqi.patch.py data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".maf2synteny/5000/blocks_coords.txt --bad-genomes "Anc0" -o data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".camsa.seqi --genomes-order "hgap,miniasm,illumina"
+run_camsa.py -o data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".camsa data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".camsa.points
+camsa_points2fasta.py  --points data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".camsa/merged/merged.camsa.points --seqi data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".camsa.seqi --fasta data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".hgap-miniasm-illumina.fasta --fill-gaps --extend-ends -o data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".merged.fasta
+```
 ## Nodule-DNA libraries:
 ### Metagenomic assembly pipeline:
 `.scripts/nodule-metagenome-wrapper.pl`
