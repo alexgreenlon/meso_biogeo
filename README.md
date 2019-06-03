@@ -22,10 +22,10 @@ ILLUMINACLIP:bin/Trimmomatic-0.36/adapters/NexteraPE-PE.fa:2:30:10 LEADING:3 TRA
 ## Pacbio libraries:
 ### HGAP:
 ### Miniasm:
-### camsa:
+### [CAMSA](https://github.com/compbiol/CAMSA):
 Create consensus assembly from two PacBio-only contigs (from HGAP and MiniASM) and Illumina-only scaffolds for the same strain. 
 
-First requires running a multiple-sequence aligment of each of the assemblies using progressiveCactus. ProgressiveCactus takes as input a tab-delimited file that gives the name for each assembly and the path to the fasta-formatted assembly file (`"$SAMPLE".paths.txt` in the example below):
+First requires running a multiple-sequence aligment of each of the assemblies using [progressiveCactus](https://github.com/glennhickey/progressiveCactus). ProgressiveCactus takes as input a tab-delimited file that gives the name for each assembly and the path to the fasta-formatted assembly file (`"$SAMPLE".paths.txt` in the example below):
 ```
 bin/runProgressiveCactus.sh /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/"$SAMPLE".paths.txt /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17 /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17/"$SAMPLE".hal
 hal2mafMP.py /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17/"$SAMPLE".hal /home/agreensp/chickpea-rhizo-geo-div/sequencing/data/pacbio/"$SAMPLE"/progressiveCactus.2.24.17/"$SAMPLE".hal.maf
