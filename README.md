@@ -21,7 +21,29 @@ ILLUMINACLIP:bin/Trimmomatic-0.36/adapters/NexteraPE-PE.fa:2:30:10 LEADING:3 TRA
 
 ## Pacbio libraries:
 ### HGAP:
+Write a list of input file names to a single file
+```
+ls *.bax.h5 >input_"$SAMPLE".fofn
+```
+Convert this fofn file to xml format
+```
+fofnToSmrtpipeInput.py input_"$SAMPLE".fofn >input.xml
+```
+Add a copy of the settings.xml file to folder. This can be obtained through smrtportal (an empty job can be run, then by looking under userdata/jobs … one can fetch the settings.xml file)
+
+Run HGAP
+```
+smrtpipe.py -D TMP=./ -D SHARED_DIR=./ -D NPROC=16 -D MAX_THREADS=16 --params=setting_Alexs.xml xml:input.xml >smrtpipe.out 2>&1
+```
 ### Miniasm:
+Run minimap to map (fastq-formatted) PacBio reads to itself
+```
+minimap -Sw5 -L100 -m 0 -t 24  "$SAMPLE".fastq | gzip -1 >reads_"$SAMPLE".paf.gz
+```
+Run miniasm 
+```
+miniasm -f data/Hyd7_L2.fastq reads_"$SAMPLE".paf.gz >asm_"$SAMPLE".gfa
+```
 ### [CAMSA](https://github.com/compbiol/CAMSA):
 Create consensus assembly from two PacBio-only contigs (from HGAP and MiniASM) and Illumina-only scaffolds for the same strain. 
 
@@ -41,6 +63,8 @@ camsa_points2fasta.py  --points data/pacbio/camsa/"$SAMPLE"/"$SAMPLE".camsa/merg
 ```
 ## Nodule-DNA libraries:
 ### Metagenomic assembly pipeline:
+Requires `scriptEstimatedCovMulti.py`, `select_from_bam.pl`, and `select_from_blastout6.pl` (found in scripts directory of this repo). Written to submit jobs to a computing cluster with PBS. 
+
 `.scripts/nodule-metagenome-wrapper.pl`
 
 ## All geneome assemblies:
