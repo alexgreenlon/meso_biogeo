@@ -1,4 +1,4 @@
-## Scripts related to manuscript Greenlon et al., 2019, PNAS
+## Scripts related to manuscript Greenlon et al., 2019, PNAS (hopefully)
 
 ## Mesorhizobium culture libraries:
 ### Read trimming:
@@ -175,14 +175,16 @@ done
 `Rscript make-isric-taxousda-subsets.r`
 ### Bioclim data:
 `Rscript extract-bioclim-mean-temp-mean-prec.9.27.18.R`
-## Scripts to upload:
-- peter's pipeline and accessory scripts
-- `make-all-gene-lists-from-roary-output.py`
-- `pull-seq-from-fasta.py`
-
 
 To re-create r-generated figures and analyses for the manuscript, download the files from the below figshare repository to the same directory as the scripts and run with `rscript`.
 
 Data required to run r scripts is available at:
 
 https://figshare.com/articles/Mesorhizobium_biogeograph_R-scripts_data/8131232
+
+The trees from the manuscript can be visualized interactively at iTol:
+Figure 1A: https://itol.embl.de/tree/13615214321176431555448182
+Figure 4A: https://itol.embl.de/tree/13615214321248111555453004
+Figure S1: https://itol.embl.de/tree/13615214321199181559855453
+Figure S12: https://itol.embl.de/tree/1361521435206081555286300
+Figure S13: https://itol.embl.de/tree/136152143676081554915683
