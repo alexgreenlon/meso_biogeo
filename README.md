@@ -1,4 +1,4 @@
-## Scripts related to manuscript Greenlon et al., 2019, PNAS (hopefully)
+## Scripts related to manuscript Greenlon et al., 2019, PNAS
 
 ## Mesorhizobium culture libraries:
 ### Read trimming:
